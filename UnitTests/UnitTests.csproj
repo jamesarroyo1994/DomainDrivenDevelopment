@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AWSRestDemo\AWSRestDemo.Api.csproj" />
+    <ProjectReference Include="..\AWSRestDemo\Api.csproj" />
   </ItemGroup>
 
 </Project>
