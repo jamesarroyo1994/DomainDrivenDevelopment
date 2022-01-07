@@ -1,30 +1,30 @@
-﻿using Domain.Entities.Products;
-using Domain.Entities.Products.Messages;
-using Infrastructure.Exceptions;
-using Infrastructure.Repositories;
-using MassTransit;
-using MediatR;
-using StackExchange.Redis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Entities.Products;
+using Domain.Entities.Products.Messages;
+using Infrastructure.EventPublisher;
+using Infrastructure.Exceptions;
+using Infrastructure.Repositories;
+using MediatR;
+using StackExchange.Redis;
 
-namespace AWSRestDemo.Commands
+namespace AWSRestDemo.Api.Requests.v1
 {
-    public class UpdateProductPriceCommandHandler : IRequestHandler<UpdateProductPriceCommand, bool>
+    public class UpdateProductPriceRequestHandler : IRequestHandler<UpdateProductPriceRequest, bool>
     {
-        private readonly IBus _bus;
         private readonly IDatabase _cache;
+        private readonly IEventPublisher _eventPublisher;
         private readonly IProductRepository _repository;
 
-        public UpdateProductPriceCommandHandler(IBus bus, IProductRepository repository, IDatabase cache)
+        public UpdateProductPriceRequestHandler(IProductRepository repository, IDatabase cache, IEventPublisher eventPublisher)
         {
-            _bus = bus;
             _repository = repository;
             _cache = cache;
+            _eventPublisher = eventPublisher;
         }
 
-        public async Task<bool> Handle(UpdateProductPriceCommand command, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateProductPriceRequest command, CancellationToken cancellationToken)
         {
             string cachedProduct = await _cache.StringGetAsync(command.Id.ToString());
             var product = JsonSerializer.Deserialize<Product>(cachedProduct) ?? await _repository.GetAsync(command.Id);
@@ -34,7 +34,7 @@ namespace AWSRestDemo.Commands
             await _repository.UpdateAsync(product);
 
             var message = new ProductPriceUpdatedMessage(command.Id, command.Price);
-            await _bus.Publish(message);
+            await _eventPublisher.Publish(message);
 
             return true;
         }

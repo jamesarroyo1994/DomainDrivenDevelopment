@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using AWSRestDemo.Api.Requests.v1;
 using Infrastructure.Exceptions;
 using MassTransit.Mediator;
-using AWSRestDemo.Commands;
 
 namespace AWSRestDemo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/{version:apiVersion}/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -17,13 +17,14 @@ namespace AWSRestDemo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateProductCommand command)
+        [ApiVersion("1.0")]
+        public async Task<IActionResult> Post([FromBody] CreateProductRequest request)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _mediator.Send(command);
+                    await _mediator.Send(request);
 
                     return Ok();
                 }
@@ -36,12 +37,14 @@ namespace AWSRestDemo.Controllers
             return BadRequest();
         }
 
+
         [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> UpdatePrice([FromBody] UpdateProductPriceCommand command)
+        [ApiVersion("1.0")]
+        public async Task<IActionResult> UpdatePrice([FromBody] UpdateProductPriceRequest request)
         {
             if (ModelState.IsValid)
             {
-                await _mediator.Send(command);
+                await _mediator.Send(request);
 
                 return Ok();
             }

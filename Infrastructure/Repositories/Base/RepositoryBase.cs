@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -23,6 +24,11 @@ namespace Infrastructure.Repositories.Base
         public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public async Task<T> GetAsync(int id)
+        {
+            return _dbSet.First(x => x.Id == id);
         }
 
         public Task GetAsync(Expression<Func<T, bool>> expression)
