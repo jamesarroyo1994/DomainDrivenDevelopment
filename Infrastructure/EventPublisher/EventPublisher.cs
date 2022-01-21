@@ -1,21 +1,22 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using MassTransit;
+using Amazon.SQS;
+using Amazon.SQS.Model;
 
 namespace Infrastructure.EventPublisher
 {
     public class EventPublisher : IEventPublisher
     {
-        private readonly IBus _bus;
+        private readonly IAmazonSQS _queue;
 
-        public EventPublisher(IBus bus)
+        public EventPublisher(IAmazonSQS queue)
         {
-            _bus = bus;
+            _queue = queue;
         }
 
-        public async Task Publish<T>(T message, CancellationToken cancellationToken = default) where T : class
+        public async Task<SendMessageResponse> Publish<T>(T message, CancellationToken cancellationToken = default) where T : SendMessageRequest
         {
-            await _bus.Publish(message);
+            return await _queue.SendMessageAsync(message);
         }
     }
 }

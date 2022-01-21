@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using AWSRestDemo.Api.Requests.v1;
 using Domain.Entities.Products;
 using Domain.Entities.Products.Messages;
 using Infrastructure.EventPublisher;
@@ -9,7 +10,7 @@ using Infrastructure.Repositories;
 using MediatR;
 using StackExchange.Redis;
 
-namespace AWSRestDemo.Api.Requests.v1
+namespace Application.Requests.v1
 {
     public class UpdateProductPriceRequestHandler : IRequestHandler<UpdateProductPriceRequest, bool>
     {

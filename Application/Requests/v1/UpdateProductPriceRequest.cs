@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace AWSRestDemo.Api.Requests.v1
+namespace Application.Requests.v1
 {
     public class UpdateProductPriceRequest : IRequest<bool>
     {
